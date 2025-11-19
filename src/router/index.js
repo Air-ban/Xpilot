@@ -11,6 +11,7 @@ const routes = [
     { path: '/discard', name: 'Discard', component: () => import('../components/Discard.vue') },
     { path: '/pure-ones-tenpai', name: 'PureOnesTenpai', component: () => import('../components/PureOnesTenpai.vue') },
     { path: '/efficiency-train', name: 'EfficiencyTrain', component: () => import('../components/EfficiencyTrain.vue') },
+    { path: '/three-hundred', name: 'ThreeHundred', component: () => import('../components/ThreeHundred.vue') },
     { path: '/point-calculation', name: 'PointCalculation', component: () => import('../components/PointCalculation.vue') },
     { path: '/hand-point-calculation', name: 'HandPointCalculation', component: () => import('../components/HandPointCalculation.vue') },
     { path: '/hand-point-calculator', name: 'HandPointCalculator', component: () => import('../components/HandPointCalculator.vue') },
