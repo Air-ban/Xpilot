@@ -19,8 +19,16 @@
           <div class="badge badge-neutral mr-2">{{ t('threeHundred.labels.no') }} {{ currentQuestion?.no }}</div>
           <span v-if="currentQuestion?.round" class="opacity-80">{{ currentQuestion.round }}</span>
         </div>
-        <div class="flex-1 mt-2 sm:mt-0">
-          <span class="opacity-80" v-if="currentQuestion?.dora">宝牌指示牌：{{ currentQuestion.dora }}</span>
+        <div class="flex-1 mt-2 sm:mt-0" v-if="currentQuestion?.dora">
+          <div class="opacity-80 mb-1">宝牌指示牌：</div>
+          <div
+            class="grid w-full"
+            :style="{ gridTemplateColumns: `repeat(${doraIndicatorRow.length || 1}, 1fr)`, gap: '0px', maxWidth: '280px' }"
+          >
+            <template v-for="(tile, idx) in doraIndicatorRow" :key="'dora-' + idx">
+              <img :src="tileSrc(tile)" :alt="tile" class="tile-img" :style="{ borderRadius: '5px' }" />
+            </template>
+          </div>
         </div>
       </div>
     </li>
@@ -42,7 +50,7 @@
             @mouseenter="hoveredIndex = index"
             @mouseleave="hoveredIndex = null"
             class="tile-img transition-transform duration-150 cursor-pointer"
-            :style="{ borderRadius: '5px', transform: hoveredIndex === index ? 'translateY(-5px)' : 'none' }"
+            :style="{ borderRadius: '5px', transform: hoveredIndex === index ? 'translateY(-5px)' : 'none', marginLeft: index === handTiles.length - 1 ? '12px' : undefined }"
           />
         </template>
       </div>
@@ -157,16 +165,29 @@ const lastDiscardResult = ref(null)
 const questions = ref([])
 const currentIndex = ref(0)
 
-const currentQuestion = computed(() => questions.value[currentIndex.value] || null)
+  const currentQuestion = computed(() => questions.value[currentIndex.value] || null)
 
 const TYPE_ORDER = { m: 0, p: 1, s: 2, z: 3 }
 const numVal = (n) => (n === '0' ? 5.5 : +n)
 const calcShanten = (arr) => new Shanten().calculateShanten(arr)
 
-const tileWidthPercent = computed(() => {
-  const count = Math.max(handTiles.value.length, 1)
-  return `${100 / count}%`
-})
+  const tileWidthPercent = computed(() => {
+    const count = Math.max(handTiles.value.length, 1)
+    return `${100 / count}%`
+  })
+
+  const doraIndicatorRow = computed(() => {
+    const d = currentQuestion.value?.dora || ''
+    const m = d.match(/^(\d)([mpsz])$/)
+    if (!m) return []
+    const n = parseInt(m[1], 10)
+    const tp = m[2]
+    const len = tp === 'z' ? 7 : 9
+    const arr = Array(len).fill('-1')
+    const idx = Math.max(0, Math.min(len - 1, n - 1))
+    arr[idx] = `${n}${tp}`
+    return arr
+  })
 
 const sortTiles = (tiles) => {
   return [...tiles].sort((a, b) => {
@@ -474,4 +495,3 @@ const handleAnalysisToggle = () => { if (showResult.value) recalcImprovementResu
 <style scoped>
 .tile-img { width: 100%; height: auto; object-fit: contain; }
 </style>
-
